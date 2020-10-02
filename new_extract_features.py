@@ -12,6 +12,7 @@ import h5py
 import tqdm
 import cv2
 import numpy as np
+import pickle
 
 sys.path.append('detectron2')
 
@@ -159,7 +160,7 @@ def main():
             file_fc.close()
             file_att.close()
             file_box.close()
-            np.save(os.path.join(args.output_dir, '%s_info.npy' % args.output_name), informations)
+            pickle.dump(informations, open(os.path.join(args.output_dir, '%s_info.pkl' % args.output_name), 'wb'))
             print('--------------------------------------------------------------------')
 
 
