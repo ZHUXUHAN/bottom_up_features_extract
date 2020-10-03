@@ -1,5 +1,9 @@
 # bottom-up-attention.pytorch
 
+> I added `new_extract_features.py` file to extract features. The usage is similar to the old `extract_features.py` file, except that the features are saved as h5 files. You can specify a group of pictures or a single picture through the `--image-dir` or `--image` parameter.
+
+---
+
 This repository contains a **PyTorch** reimplementation of the [bottom-up-attention](https://github.com/peteanderson80/bottom-up-attention) project based on *Caffe*. 
 
 We use [Detectron2](https://github.com/facebookresearch/detectron2) as the backend to provide completed functions including training, testing and feature extraction. Furthermore, we migrate the pre-trained Caffe-based model from the original repository which can extract **the same visual features** as the original model (with deviation < 0.01).
@@ -33,13 +37,14 @@ Note that most of the requirements above are needed for Detectron2.
 1. Clone the project inclduing the required version of Detectron2
    ```bash
    # clone the repository inclduing Detectron2(@5e2a6f6) 
-   $ git clone --recursive https://github.com/MILVLG/bottom-up-attention.pytorch
+   $ git clone --recursive https://github.com/ezeli/bottom_up_features_extract.git
    ```
    
 2. Install Detectron2
    ```bash
    $ cd detectron2
    $ pip install -e .
+   $ cd ..
    ```
 **Note that the latest version of Detectron2 is incompatible with our project and may result in a running error. Please use the recommended version of Detectron2 (@5e2a6f6) which is downloaded in step 1.** 
 
