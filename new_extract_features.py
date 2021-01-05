@@ -96,6 +96,19 @@ def main():
     MAX_BOXES = cfg.MODEL.BUA.EXTRACTOR.MAX_BOXES
     CONF_THRESH = cfg.MODEL.BUA.EXTRACTOR.CONF_THRESH
 
+    classes = []
+    with open(os.path.join('evaluation/objects_vocab.txt')) as f:
+        for object in f.readlines():
+            names = [n.lower().strip() for n in object.split(',')]
+            classes.append(names[0])
+    attributes = []
+    with open(os.path.join('evaluation/attributes_vocab.txt')) as f:
+        for att in f.readlines():
+            names = [n.lower().strip() for n in att.split(',')]
+            attributes.append(names[0])
+    classes = np.array(classes)
+    attributes = np.array(attributes)
+
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
     with h5py.File(os.path.join(args.output_dir, '%s_fc.h5' % args.output_name), 'a') as file_fc, \
@@ -137,20 +150,20 @@ def main():
                 image_feat = feats[keep_boxes].numpy()
                 image_bboxes = dets[keep_boxes].numpy()
                 image_objects_conf = np.max(scores[keep_boxes].numpy()[:, 1:], axis=1)
-                image_objects = np.argmax(scores[keep_boxes].numpy()[:, 1:], axis=1)
+                image_objects = classes[np.argmax(scores[keep_boxes].numpy()[:, 1:], axis=1)]
                 info = {
                     'image_name': img_nm,
                     'image_h': np.size(im, 0),
                     'image_w': np.size(im, 1),
                     'num_boxes': len(keep_boxes),
-                    'objects_id': image_objects,
+                    'objects': image_objects,
                     'objects_conf': image_objects_conf
                 }
                 if attr_scores is not None:
                     attr_scores = attr_scores[0].cpu()
                     image_attrs_conf = np.max(attr_scores[keep_boxes].numpy()[:, 1:], axis=1)
-                    image_attrs = np.argmax(attr_scores[keep_boxes].numpy()[:, 1:], axis=1)
-                    info['attrs_id'] = image_attrs
+                    image_attrs = attributes[np.argmax(attr_scores[keep_boxes].numpy()[:, 1:], axis=1)]
+                    info['attrs'] = image_attrs
                     info['attrs_conf'] = image_attrs_conf
                 file_fc.create_dataset(img_nm, data=image_feat.mean(0))
                 file_att.create_dataset(img_nm, data=image_feat)
